@@ -1,0 +1,19 @@
+{
+  "name": "gridfs.up_dowload",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gridCode.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "gridfs-stream": "*",
+    "mongoose": "*",
+    "multer": "*",
+    "multer-gridfs-storage": "*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
