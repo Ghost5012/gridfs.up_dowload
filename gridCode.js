@@ -61,3 +61,14 @@ module.exports.removeFile = function (conn, fileName) {
         });
     })
 }
+
+//checking file existence
+module.exports.fileExist = function (conn, file) {
+    conn.once('open', function () {
+        var gfs = Grid(conn.db, mongoose.mongo)
+        gfs.exist({ filename: file }, function (err, found) {
+            if (err) return handleError(err);
+            found ? console.log('File exists') : console.log('File does not exist');
+        })
+    });
+}
