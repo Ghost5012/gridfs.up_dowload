@@ -3,7 +3,8 @@ var mongoose = require('mongoose');
 var Grid = require('gridfs-stream');
 //change the db name below
 var conn = mongoose.createConnection('mongodb://localhost:27017/fileUpload');
-module.exports.uploadFile = function (conn, callback) {
+//uploade(save) file to a mongoDB database
+module.exports.uploadFile = function (conn, file) {
     conn.once('open', function () {
         var gfs = Grid(conn.db, mongoose.mongo);
         //9a. create a stream, this will be
@@ -16,21 +17,23 @@ module.exports.uploadFile = function (conn, callback) {
         //9b. create a readstream to read the file
         //from the filestored folder
         //and pipe into the database
-        //replace the file path
-        fs.createReadStream('/home/vincent/Downloads/404.jpg').pipe(writestream);
+        fs.createReadStream(file).pipe(writestream);
         // all set!
-        writestream.on("close", callback);
+        writestream.on("close", function (file) {
+            // do something with `file`
+            console.log(file.filename);
+        });
     })
-}
+};
 
-module.exports.downloadFile = function (conn, callback) {
+// download file from MongoDB database
+module.exports.downloadFile = function (conn, fileName) {
     conn.once('open', function () {
         var gfs = Grid(conn.db, mongoose.mongo);
 
         //create a writestream to write the file
         //from the database
-        //replace the file path
-        var fswritestram = fs.createWriteStream('/home/vincent/Desktop/404.jpg');
+        var fswritestram = fs.createWriteStream('/home/vincent/Desktop/' + fileName);
 
 
         // create a stream, this will be
@@ -42,6 +45,19 @@ module.exports.downloadFile = function (conn, callback) {
         readstream.pipe(fswritestram)
 
 
-        readstream.on("close", callback)
+        readstream.on("close", function () {
+            console.log('File retrieved successfully')
+        });
+    })
+}
+
+//delete file from the db
+module.exports.removeFile = function (conn, fileName) {
+    conn.once('open', function () {
+        var gfs = Grid(conn.db, mongoose.mongo);
+        gfs.remove({ filename: fileName }, function (err) {
+            if (err) return handleError(err);
+            console.log("File Deleted")
+        });
     })
 }
